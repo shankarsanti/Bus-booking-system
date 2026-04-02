@@ -1,0 +1,158 @@
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.booking-left,
+.booking-right {
+  width: 100%;
+}
+
+.bus-info-card {
+  margin-bottom: 20px;
+  padding: 25px;
+}
+
+.passenger-details-card {
+  padding: 30px;
+  position: sticky;
+  top: 100px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #f9a825;
+}
+
+.booking-summary {
+  background: #fff9e6;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 2px solid #f9a825;
+}
+
+.booking-confirm-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.booking-confirm-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tablet */
+@media (max-width: 968px) {
+  .booking-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .passenger-details-card {
+    position: static;
+    padding: 25px;
+  }
+
+  .bus-info-card {
+    padding: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .bus-info-card h2 {
+    font-size: 20px;
+  }
+
+  .passenger-details-card {
+    padding: 20px;
+  }
+
+  .passenger-details-card h3 {
+    font-size: 18px;
+  }
+
+  .form-input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .booking-summary {
+    padding: 15px;
+  }
+
+  .booking-summary p:last-child {
+    font-size: 20px;
+  }
+
+  .booking-confirm-btn {
+    padding: 12px;
+    font-size: 15px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .bus-info-card {
+    padding: 15px;
+  }
+
+  .bus-info-card h2 {
+    font-size: 18px;
+  }
+
+  .passenger-details-card {
+    padding: 15px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-input {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .booking-summary {
+    padding: 12px;
+  }
+
+  .booking-summary p {
+    font-size: 13px;
+  }
+
+  .booking-summary p:last-child {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,185 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is super admin
+    function isSuperAdmin() {
+      return request.auth != null && request.auth.token.role == 'super_admin';
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && (request.auth.token.role == 'admin' || isSuperAdmin());
+    }
+    
+    // Helper function to check if user is agent
+    function isAgent() {
+      return request.auth != null && request.auth.token.role == 'agent';
+    }
+    
+    // Helper function to check if user is operator
+    function isOperator() {
+      return request.auth != null && request.auth.token.role == 'operator';
+    }
+    
+    // Helper function to check if user is support staff
+    function isSupport() {
+      return request.auth != null && request.auth.token.role == 'support';
+    }
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user has staff privileges
+    function isStaff() {
+      return isAdmin() || isSupport();
+    }
+    
+    // Routes - public read, admin write
+    match /routes/{routeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Buses - public read, admin write
+    match /buses/{busId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Trips - public read, admin write
+    match /trips/{tripId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Bookings - users can read their own, agents and admins can read all
+    match /bookings/{bookingId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || 
+         isAdmin() || 
+         isAgent());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin() || isAgent();
+    }
+    
+    // Users collection - users can read/write their own, admins can read all
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == userId || isAdmin());
+      // Allow user creation during signup (when not yet authenticated)
+      allow create: if true;
+      allow update: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if isAdmin();
+    }
+    
+    // Agents collection - authenticated users can read, only admins can write
+    match /agents/{agentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Wallet transactions - agents can read their own, admins can read all
+    match /walletTransactions/{transactionId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.agentId == request.auth.uid || isAdmin());
+      allow create: if isAgent() || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Coupons - public read, admin write
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Operators - authenticated read, admin write, operators can update their own
+    match /operators/{operatorId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (isOperator() && request.auth.uid == operatorId);
+      allow delete: if isAdmin();
+    }
+    
+    // Notifications - users can read their own, system can create
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // Reviews - authenticated users can create, public read for approved
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' || 
+        (isAuthenticated() && resource.data.userId == request.auth.uid) ||
+        isStaff();
+      allow create: if isAuthenticated();
+      allow update: if isAdmin() || 
+        (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    
+    // Loyalty Points - users can read their own, system can write
+    match /loyaltyPoints/{userId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin() || isAgent();
+    }
+    
+    // Points Transactions - users can read their own
+    match /pointsTransactions/{transactionId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Bus Locations - public read, operators and admins can write
+    match /busLocations/{locationId} {
+      allow read: if true;
+      allow write: if isOperator() || isAdmin();
+    }
+    
+    // Tracking Updates - public read, operators and admins can write
+    match /trackingUpdates/{updateId} {
+      allow read: if true;
+      allow write: if isOperator() || isAdmin();
+    }
+    
+    // Support Tickets - users can read their own, staff can read all
+    match /supportTickets/{ticketId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isStaff());
+      allow create: if isAuthenticated();
+      allow update: if isStaff() || 
+        (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    
+    // Refunds - users can read their own, staff can read all
+    match /refunds/{refundId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isStaff());
+      allow create: if isAuthenticated();
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+    
+    // Reports - staff only
+    match /reports/{reportId} {
+      allow read, write: if isStaff();
+    }
+    
+    // Login History - authenticated users can create, users can read their own, admins can read all
+    match /loginHistory/{historyId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+      // Allow anyone to create login history (for tracking failed attempts)
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,11 @@
+backend/
+.github/
+.kiro/
+.vscode/
+*.md
+!README.md
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
