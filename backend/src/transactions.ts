@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-export const bookSeatsTransaction = functions.https.onCall(async (data, context) => {
+export const bookSeatsTransaction = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -10,7 +10,7 @@ export const bookSeatsTransaction = functions.https.onCall(async (data, context)
 
   try {
     const db = admin.firestore();
-    const result = await db.runTransaction(async (transaction) => {
+    const result = await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
       const tripRef = db.collection('trips').doc(tripId);
       const tripDoc = await transaction.get(tripRef);
 
@@ -46,7 +46,7 @@ export const bookSeatsTransaction = functions.https.onCall(async (data, context)
   }
 });
 
-export const cancelBookingTransaction = functions.https.onCall(async (data, context) => {
+export const cancelBookingTransaction = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -55,7 +55,7 @@ export const cancelBookingTransaction = functions.https.onCall(async (data, cont
 
   try {
     const db = admin.firestore();
-    await db.runTransaction(async (transaction) => {
+    await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
       const bookingRef = db.collection('bookings').doc(bookingId);
       const tripRef = db.collection('trips').doc(tripId);
 
@@ -96,7 +96,7 @@ export const cancelBookingTransaction = functions.https.onCall(async (data, cont
   }
 });
 
-export const updateWalletTransaction = functions.https.onCall(async (data, context) => {
+export const updateWalletTransaction = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -109,7 +109,7 @@ export const updateWalletTransaction = functions.https.onCall(async (data, conte
 
   try {
     const db = admin.firestore();
-    await db.runTransaction(async (transaction) => {
+    await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
       const walletRef = db.collection('wallets').doc(agentId);
       const walletDoc = await transaction.get(walletRef);
 

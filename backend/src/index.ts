@@ -15,7 +15,7 @@ export * from './loginHistory';
  * Set custom user role claims
  * Only admins can call this function
  */
-export const setUserRole = functions.https.onCall(async (data, context) => {
+export const setUserRole = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -67,7 +67,7 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
   }
 });
 
-export const refreshToken = functions.https.onCall(async (data, context) => {
+export const refreshToken = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -80,7 +80,7 @@ export const refreshToken = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const processBooking = functions.https.onCall(async (data, context) => {
+export const processBooking = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -92,7 +92,7 @@ export const processBooking = functions.https.onCall(async (data, context) => {
   }
 
   try {
-    const result = await admin.firestore().runTransaction(async (transaction) => {
+    const result = await admin.firestore().runTransaction(async (transaction: admin.firestore.Transaction) => {
       const tripRef = admin.firestore().collection('trips').doc(tripId);
       const tripDoc = await transaction.get(tripRef);
 

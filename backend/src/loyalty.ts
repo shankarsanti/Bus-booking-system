@@ -8,13 +8,6 @@ const TIER_THRESHOLDS = {
   platinum: 10000
 };
 
-const POINTS_RULES = {
-  bookingPercentage: 5,
-  referralBonus: 500,
-  reviewBonus: 50,
-  birthdayBonus: 200
-};
-
 type Tier = 'bronze' | 'silver' | 'gold' | 'platinum';
 
 function calculateTier(points: number): Tier {
@@ -34,7 +27,7 @@ function getTierBenefits(tier: Tier): string[] {
   return benefits[tier];
 }
 
-export const getLoyaltyAccount = functions.https.onCall(async (data, context) => {
+export const getLoyaltyAccount = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -66,7 +59,7 @@ export const getLoyaltyAccount = functions.https.onCall(async (data, context) =>
   }
 });
 
-export const addLoyaltyPoints = functions.https.onCall(async (data, context) => {
+export const addLoyaltyPoints = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -75,7 +68,7 @@ export const addLoyaltyPoints = functions.https.onCall(async (data, context) => 
 
   try {
     const db = admin.firestore();
-    const result = await db.runTransaction(async (transaction) => {
+    const result = await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
       const loyaltyRef = db.collection('loyaltyPoints').doc(userId);
       const loyaltyDoc = await transaction.get(loyaltyRef);
 
@@ -127,7 +120,7 @@ export const addLoyaltyPoints = functions.https.onCall(async (data, context) => 
   }
 });
 
-export const redeemLoyaltyPoints = functions.https.onCall(async (data, context) => {
+export const redeemLoyaltyPoints = functions.https.onCall(async (data: any, context: functions.https.CallableContext) => {
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
   }
@@ -136,7 +129,7 @@ export const redeemLoyaltyPoints = functions.https.onCall(async (data, context) 
 
   try {
     const db = admin.firestore();
-    const result = await db.runTransaction(async (transaction) => {
+    const result = await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
       const loyaltyRef = db.collection('loyaltyPoints').doc(userId);
       const loyaltyDoc = await transaction.get(loyaltyRef);
 

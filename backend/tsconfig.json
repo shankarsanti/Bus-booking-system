@@ -9,7 +9,10 @@
     "target": "es2017",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "types": ["node"],
+    "composite": true
   },
   "compileOnSave": true,
   "include": ["src"],

@@ -231,7 +231,7 @@ export default function AdminAgents() {
             </tr>
           </thead>
           <tbody>
-            {agents.map((agent) => (
+            {agents.map((agent: Agent) => (
               <tr key={agent.id} className="border-t hover:bg-gray-50">
                 <td className="px-6 py-4 font-medium">{agent.name}</td>
                 <td className="px-6 py-4">{agent.email}</td>
